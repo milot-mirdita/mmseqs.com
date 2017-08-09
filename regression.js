@@ -121,7 +121,7 @@ d3.json("regression.php", function (error, data) {
     if (error) throw error;
 
     var names = Object.values(data.filter(function (d) {
-        return d.mode != 2;
+        return d.mode < 2 || d.mode == 9;
     }).map(function (id) {
         return {
             id: id.name,
