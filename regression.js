@@ -15,6 +15,9 @@ var debounce = function(func, wait, immediate) {
 	};
 };
 
+var tooltip = d3.select("body").append("div").attr("class", "tooltip").style("opacity", 0);
+var link = tooltip.append("a").attr("target", "_blank");
+
 function linechart(svg, hdiv, ylab, data) {
     svg.attr("width", window.innerWidth).attr("height", window.innerHeight / hdiv);
 
@@ -22,7 +25,6 @@ function linechart(svg, hdiv, ylab, data) {
     var width = window.innerWidth - margin.left - margin.right;
     var height = (window.innerHeight / hdiv) - margin.top - margin.bottom;
     var g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-    var tooltip = d3.select("body").append("div").attr("class", "tooltip").style("opacity", 0);
 
     var parseTime = d3.timeParse("%Y-%m-%d %H:%M:%S");
 
@@ -95,16 +97,21 @@ function linechart(svg, hdiv, ylab, data) {
                 }
                 tooltip.transition()
                     .duration(100)
-                    .style("opacity", 1);
-                tooltip.html(d.git)
+                    .style("opacity", 1)
                     .style("left", Math.max((x - 240), -30) + "px")
                     .style("top", (y - 28) + "px");
+
+                link
+                    .attr("href", "https://github.com/soedinglab/MMseqs2/commit/" + d.git)
+                    .html(d.git);
             })
-            .on("mouseout touchend", function (d) {
-                tooltip.transition()
-                    .duration(100)
-                    .style("opacity", 0);
-            });
+            // .on("mouseout touchend", function (d) {
+            //     debounce(function() {
+            //         tooltip.transition()
+            //             .duration(100)
+            //             .style("opacity", 0);
+            //     }, 1000)();
+            // });
 
         regression.append("text")
             .datum(function (d) { return { id: d.id, value: d.values[d.values.length - 1] }; })
